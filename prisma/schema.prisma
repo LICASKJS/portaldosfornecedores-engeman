@@ -1,0 +1,100 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  passwordHash  String
+  role          Role     @default(SUPPLIER)
+  supplier      Supplier? @relation(fields: [supplierId], references: [id])
+  supplierId    String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  passwordResets PasswordReset[]
+  sessions        Session[]
+  documents       Document[] @relation("UploadedDocs")
+}
+
+model Supplier {
+  id              String   @id @default(cuid())
+  fantasyName     String
+  legalName       String
+  documentId      String   @unique
+  email           String
+  phone           String?
+  address         String?
+  status          SupplierStatus @default(PENDING)
+  iqfScore        Float?
+  approvalScore   Float?
+  proceduresAck   Boolean @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  users           User[]
+  documents       Document[]
+  iqfHistory      IQFHistory[]
+}
+
+model Document {
+  id            String   @id @default(cuid())
+  supplierId    String
+  type          DocumentType
+  fileKey       String
+  originalName  String
+  mimeType      String
+  sizeBytes     Int
+  uploadedById  String
+  uploadedAt    DateTime @default(now())
+  status        DocStatus @default(RECEIVED)
+  notes         String?
+
+  supplier      Supplier @relation(fields: [supplierId], references: [id])
+  uploadedBy    User     @relation("UploadedDocs", fields: [uploadedById], references: [id])
+}
+
+model IQFHistory {
+  id            String   @id @default(cuid())
+  supplierId    String
+  monthRef      DateTime
+  iqfScore      Float
+  approvalScore Float?
+  notes         String?
+
+  supplier      Supplier @relation(fields: [supplierId], references: [id])
+  createdAt     DateTime @default(now())
+}
+
+model PasswordReset {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  userId        String
+  refreshToken  String   @unique
+  ip            String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+  revokedAt     DateTime?
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+enum Role { ADMIN SUPPLIER ANALYST }
+enum SupplierStatus { PENDING APPROVED BLOCKED }
+enum DocumentType { CLAF CONTRATO CERTIDAO OUTROS }
+enum DocStatus { RECEIVED UNDER_REVIEW APPROVED REJECTED }
