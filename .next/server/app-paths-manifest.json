@@ -1,8 +1,17 @@
 {
-  "/entrar/page": "app/entrar/page.js",
-  "/page": "app/page.js",
-  "/cfe/page": "app/cfe/page.js",
+  "/api/claf/route": "app/api/claf/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/fornecedor/route": "app/api/fornecedor/route.js",
+  "/api/uploads/route": "app/api/uploads/route.js",
+  "/contato/page": "app/contato/page.js",
   "/admin/page": "app/admin/page.js",
+  "/cfe/page": "app/cfe/page.js",
+  "/entrar/page": "app/entrar/page.js",
+  "/cadastro/page": "app/cadastro/page.js",
+  "/senha/page": "app/senha/page.js",
   "/portal/page": "app/portal/page.js",
-  "/contato/page": "app/contato/page.js"
+  "/page": "app/page.js",
+  "/token/page": "app/token/page.js",
+  "/resetar-senha/page": "app/resetar-senha/page.js",
+  "/procedimento/page": "app/procedimento/page.js"
 }
